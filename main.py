@@ -50,7 +50,7 @@ def disconnect_network():
 def print_dishes(day, destination): # prints the dishes for the given day to destination
     dishes = mensa.get_dishes(day)
     if dishes == None: # if day was invalid value
-        irc.send('PRIVMSG %s :Zu dumm ne Nummer richtig ein zu tippen?\r\n'% (destination))
+        irc.send('PRIVMSG %s :Zu dumm ne Nummer richtig einzutippen?\r\n'% (destination))
     else:
         if day != 0: #skip printing of date if today
             irc.send('PRIVMSG %s :%s\r\n'% (destination, dishes[5]))

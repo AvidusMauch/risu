@@ -39,8 +39,8 @@ class Mensa:
 
     def get_dishes(self, day): #get the dishes for a given day and return them
         self.update() #check if new day
-        garnish = self.__dishes[day][4] + ", "
         if ((type(day) is int) and 0 <= day <=15): #check for correct day
+            garnish = self.__dishes[day][4] + ", "
             for i in range(7, self.dish_range):
                 if self.__dishes[day][i] != 0:
                     garnish += self.__dishes[day][i] + ", "        
