@@ -34,8 +34,12 @@ def connect_network(network_id, port):
     irc.send('USER %s %s bla :%s\r\n' % (ident, network_id, realname)) #Send User Info to the server
     return irc
 
-def join_channel(channel_name):     
-    irc.send('JOIN %s\r\n' % channel_name) 
+def join_channel(arg):     
+    channames = arg.split()
+    for channel_name in channames:
+        if channel_name[0] != "#":
+            channel_name = "#" + channel_name
+        irc.send('JOIN %s\r\n' % channel_name) 
     return 
 
 def leave_channel(channel_name):    
@@ -48,7 +52,7 @@ def disconnect_network():
     irc.close()
 
 def print_dishes(day, destination): # prints the dishes for the given day to destination
-    dishes = mensa.get_dishes(day)
+    dishes = mensa.get_dishes(int(day))
     if dishes == None: # if day was invalid value
         irc.send('PRIVMSG %s :Zu dumm ne Nummer richtig einzutippen?\r\n'% (destination))
     else:
@@ -56,7 +60,7 @@ def print_dishes(day, destination): # prints the dishes for the given day to des
             irc.send('PRIVMSG %s :%s\r\n'% (destination, dishes[5]))
         irc.send('PRIVMSG %s :D1: %s\r\n'% (destination, dishes[0]))
         irc.send('PRIVMSG %s :D2: %s\r\n' % (destination, dishes[1]))
-        irc.send('PRIVMSG %s :E Hauptgerichte: %s, %s \r\n' % (destination, dishes[2], dishes[3]))
+        irc.send('PRIVMSG %s :E Hauptgerichte: %s; %s \r\n' % (destination, dishes[2], dishes[3]))
         irc.send('PRIVMSG %s :E Beilagen: %s\r\n' % (destination, dishes[4]))
 
 def mensa_search(dish_name, destination): # searches all dishes for the given string and posts it if found 
@@ -153,18 +157,16 @@ while True:
                     post_say(arg, user_nick)
             
             elif function ==  "!join" and user_nick == admin: #join channel
-                channel_name = arg.split()[0] 
-                if channel_name[0] != "#":
-                    join_channel("#"+channel_name)
+                if not arg:
+                    irc.send('PRIVMSG %s :Kein channel anegegeben\r\n' % (destination))
                 else:
-                    join_channel(channel_name)
+                    join_channel(arg)
             
             elif function ==  "!leave" and user_nick == admin: #leave channel
-                channel_name = arg.split()[0] 
-                if channel_name[0] != "#":
-                    leave_channel("#"+channel_name)
+                if not arg:
+                    irc.send('PRIVMSG %s :Kein channel anegegeben\r\n' % (destination))
                 else:
-                    leave_channel(channel_name)
+                    leave_channel(arg)
             
             else: #print help if unknown command was issued
                 irc.send('PRIVMSG %s :unknown command.\r\n' % (destination))
