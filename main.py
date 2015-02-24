@@ -120,6 +120,7 @@ while True:
         arg = None #reset arg for every loop 
         if len(message.split())>1:
             arg = message.split(" ", 1)[1]
+            arg = arg[:-2]
         print 'Funtion is ' + function + ' From ' + user_nick #Print who commanded [This is for debug and logging]
         
 #################################
@@ -142,7 +143,7 @@ while True:
                 if not arg:
                     irc.send('PRIVMSG %s : Musst schon nen Suchbegriff angeben\r\n' % (destination))
                 else:
-                    mensa_search(arg.split()[0], destination)
+                    mensa_search(str(arg), destination)
             
             elif function == "!help":
                 if not arg:
