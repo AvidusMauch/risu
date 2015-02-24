@@ -12,12 +12,21 @@ Class to handle parsing and processing  of the mensa dishes of the comming weeks
 class Mensa:
     def __init__(self): # initiate object with current date and mensa schedule
         self.__lastupdate = date.today()
-        self.__dishes = self.import_dishes()
+        [self.__dishes, self.__day] = self.import_dishes()
     
     def update(self): # check if new day, and if so update mensa schedule
         if (self.__lastupdate < date.today()):
             self.__lastupdate = date.today()
             self.__dishes = self.import_dishes()
+
+    def allesdreck(self):
+        page = requests.get("http://rolf-schneider.net/mensa/?translation=reality")
+        tree = html.fromstring(page.text)
+        allesdreck = tree.xpath("//td[@id='meal']")
+        garnish = allesdreck[4].text
+        for i in range(7, len(allesdreck)):
+            garnish += allesdreck[i].text + ", " 
+        return [allesdreck[2].text,  allesdreck[3].text, allesdreck[5].text, allesdreck[6].text, garnish[:-2]]
 
     def import_dishes(self): # get the mensa schedule and save it
         page = requests.get("http://www.studentenwerk.uni-heidelberg.de/speiseplan")
@@ -35,13 +44,13 @@ class Mensa:
                 day_menu_buffer.append(dishes_buffer.xpath("td")[0].text)
             dishes.append(day_menu_buffer)
 
-        self.__day = [] #saving formated dates as string list
+        day = [] #saving formated dates as string list
         for k in range(0, len(mensa_feld.xpath("h4"))):
             day_buffer = mensa_feld.xpath("h4")[k]
             if day_buffer.text[0] != "S":
-                self.__day.append(day_buffer.text)
+                day.append(day_buffer.text)
      
-        return dishes
+        return dishes, day
     
     def get_dishes(self, day): #get the dishes for a given day and return them
         self.update() #check if new day

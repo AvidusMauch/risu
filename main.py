@@ -71,6 +71,13 @@ def mensa_search(dish_name, destination): # searches all dishes for the given st
         for i in range(0, len(searched_dishes)):
             irc.send('PRIVMSG %s :%s\r\n' % (destination, searched_dishes[i]))
 
+def allesdreck(destination): #prints the dishes for today in allesdreck translation
+        dishes = mensa.allesdreck()
+        irc.send('PRIVMSG %s :D1: %s\r\n'% (destination, dishes[0]))
+        irc.send('PRIVMSG %s :D2: %s\r\n' % (destination, dishes[1]))
+        irc.send('PRIVMSG %s :E Hauptgerichte: %s; %s \r\n' % (destination, dishes[2], dishes[3]))
+        irc.send('PRIVMSG %s :E Beilagen: %s\r\n' % (destination, dishes[4]))
+
 def post_say(arg, sender): # takes a string of recievers and sends them the given message
     if not arg.find(":"): # checking for wrong syntax
         irc.send('PRIVMSG %s :Wrong syntax guy\r\n' % (sender))
@@ -83,11 +90,13 @@ def post_say(arg, sender): # takes a string of recievers and sends them the give
 
 def post_help(destination, command): #help for all avaiable commands
     if command == "help" or command == "!help":
-        irc.send('PRIVMSG %s :Avaiable commands: !mensa, !mensasearch, !say. Type !help "command" for more information\r\n' % (destination)) 
+        irc.send('PRIVMSG %s :Avaiable commands: !mensa, !mensasearch, !allesdreck, !say. Type !help "command" for more information\r\n' % (destination)) 
     elif command == "mensa" or command == "!mensa":
         irc.send('PRIVMSG %s :Prints the dishes of a given day. Default day is 0 (today). Syntax: "!mensa d" d between 0 and 14.\r\n' % (destination)) 
+    elif command == "allesdreck" or command == "!allesdreck":
+        irc.send('PRIVMSG %s :Prints todays dishes in allesdreck stransalation.\r\n' % (destination)) 
     elif command == "mensasearch" or command == "!mensasearch":
-        irc.send('PRIVMSG %s :Searches for the given name in dishes of the comming two weeks and prints the date and dish. Syntax: "!mensa_s name" \r\n' % (destination)) 
+        irc.send('PRIVMSG %s :Searches for the given name in dishes of the comming two weeks and prints the date and dish. Syntax: "!mensasearch name" \r\n' % (destination)) 
     elif command == "say" or command == "!say":
         irc.send('PRIVMSG %s :Syntax: "nick1,nick2,#channel1,#channel2:Hello World". Sends to the chosen targets seperated with commas the given string behind :\r\n' % (destination)) 
     else:
@@ -139,6 +148,9 @@ while True:
                 else:
                     print_dishes(int(arg.split()[0]), destination)
             
+            elif function == "!allesdreck": # posts mensa dishes for given day in allesdreck translation
+                allesdreck(destination)
+            
             elif function == "!mensasearch": #search for a sting in all dishes of the comming two weeks
                 if not arg:
                     irc.send('PRIVMSG %s : Musst schon nen Suchbegriff angeben\r\n' % (destination))
@@ -169,6 +181,6 @@ while True:
                 else:
                     leave_channel(arg)
             
-            else: #print help if unknown command was issued
+            #else: #print help if unknown command was issued
                 irc.send('PRIVMSG %s :unknown command.\r\n' % (destination))
                 post_help(destination,"help")
