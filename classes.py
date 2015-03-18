@@ -17,7 +17,7 @@ class Mensa:
     def update(self): # check if new day, and if so update mensa schedule
         if (self.__lastupdate < date.today()):
             self.__lastupdate = date.today()
-            self.__dishes = self.import_dishes()
+            [self.__dishes,self.__day] = self.import_dishes()
 
     def allesdreck(self):
         page = requests.get("http://rolf-schneider.net/mensa/?translation=reality")
