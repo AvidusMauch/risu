@@ -66,11 +66,11 @@ class Mensa:
     def search_dish(self, dish_name): #search all dishes fpr given string dish_name
         self.update() # check if new day
         day_buffer = []
-        search_pattern = "*" + dish_name + "*"
+        search_pattern = "*" + dish_name.lower() + "*"
         found = False
         for i in range(0, len(self.__dishes)):
             for j in range(0,len(self.__dishes[i]) ):
-                if fnmatch.fnmatch(str(self.__dishes[i][j]), str(search_pattern)):
+                if fnmatch.fnmatch(str(self.__dishes[i][j]).lower(), str(search_pattern)):
                     found = True
                     # format the output acording to mensa part
                     if 0 <= j <= 1:
